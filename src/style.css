@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 50px 24px;
+    color: #f8fafc;
+    background:
+        radial-gradient(ellipse at top left, #312e81 0%, transparent 40%),
+        radial-gradient(ellipse at bottom right, #164e63 0%, transparent 40%),
+        #0b1020;
+}
+
+/* Форма пошуку */
+.search-form {
+    width: min(100%, 720px);
+    margin: 0 auto 50px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-form::before {
+    content: '⌕';
+    font-size: 32px;
+    color: #a5b4fc;
+    padding: 0 14px;
+}
+
+.search-form:focus-within {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+}
+
+.search-input {
+    width: 100%;
+    min-width: 0;
+    padding: 16px 12px;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #94a3b8;
+}
+
+/* Галерея */
+.gallery {
+    width: min(100%, 1400px);
+    margin: 0 auto;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 28px;
+}
+
+/* Картки галереї */
+.gallery li {
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    animation: appear 0.5s ease both;
+}
+
+.gallery li:hover {
+    transform: translateY(-8px);
+    border-color: rgba(129, 140, 248, 0.6);
+    box-shadow: 0 22px 45px rgba(79, 70, 229, 0.22);
+}
+
+/* Зображення в картках */
+.gallery img {
+    display: block;
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery li:hover img {
+    transform: scale(1.06);
+}
+
+/* Інформація під фото */
+.gallery .info {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    padding: 18px 12px;
+    color: #cbd5e1;
+    font-size: 13px;
+    text-align: center;
+}
+
+.gallery .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gallery .info-item b {
+    color: #fff;
+    font-size: 15px;
+}
+
+/* Блок для повідомлень */
+.elem {
+    width: fit-content;
+    max-width: 100%;
+    margin: 30px auto;
+    color: #c7d2fe;
+    text-align: center;
+    font-size: 15px;
+}
+
+/* Анімація появи */
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Телефони */
+@media (max-width: 600px) {
+    body {
+        padding: 28px 14px;
+    }
+
+    .search-form {
+        margin-bottom: 30px;
+        border-radius: 16px;
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .gallery img {
+        height: 250px;
+    }
+}
+
+/* Для тих, хто вимкнув анімацію в налаштуваннях */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Картка з фотографією */
+.photo-card {
+    overflow: hidden;
+    position: relative;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+    animation: card-appear 0.5s ease both;
+}
+
+/* Ефект наведення */
+.photo-card:hover {
+    transform: translateY(-8px);
+    border-color: #818cf8;
+    box-shadow: 0 20px 45px rgba(99, 102, 241, 0.25);
+}
+
+/* Фотографія */
+.photo-card>img {
+    display: block;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    background: #1e293b;
+    transition: transform 0.5s ease;
+}
+
+.photo-card:hover>img {
+    transform: scale(1.06);
+}
+
+/* Панель статистики */
+.stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 10px;
+    background: rgba(15, 23, 42, 0.96);
+}
+
+/* Окремий показник */
+.stats-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.25s ease;
+}
+
+/* Іконки */
+.stats-item .material-icons {
+    font-size: 23px;
+    color: #a5b4fc;
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+/* Ефекти для кожної іконки */
+.stats-item:nth-child(1) .material-icons {
+    color: #fb7185;
+}
+
+.stats-item:nth-child(2) .material-icons {
+    color: #38bdf8;
+}
+
+.stats-item:nth-child(3) .material-icons {
+    color: #c084fc;
+}
+
+.stats-item:nth-child(4) .material-icons {
+    color: #34d399;
+}
+
+.photo-card:hover .stats-item .material-icons {
+    transform: translateY(-3px);
+}
+
+.stats-item:hover {
+    color: #fff;
+}
+
+/* Анімація появи карток */
+@keyframes card-appear {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптація для телефонів */
+@media (max-width: 480px) {
+    .photo-card {
+        border-radius: 16px;
+    }
+
+    .photo-card>img {
+        height: 220px;
+    }
+
+    .stats {
+        gap: 4px;
+        padding: 14px 6px;
+    }
+
+    .stats-item {
+        font-size: 11px;
+    }
+
+    .stats-item .material-icons {
+        font-size: 21px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .photo-card,
+    .photo-card>img,
+    .stats-item,
+    .stats-item .material-icons {
+        animation: none;
+        transition: none;
+    }
+}

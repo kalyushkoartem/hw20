@@ -1,17 +1,117 @@
-const BASE_URL = "https://pixabay.com/api/";
-const API_KEY = "57620790-6f9600de6d512c8080995278e";
-const page = 1;
-export async function getImages(search) {
+import debounce from "lodash.debounce";
+import * as basicLightbox from "basiclightbox";
+import "basiclightbox/dist/basicLightbox.min.css";
+import { success, error, info, notice } from "@pnotify/core/dist/PNotify.js";
+import * as PNotifyMobile from "@pnotify/mobile/dist/PNotifyMobile.js";
+import "@pnotify/mobile/dist/PNotifyMobile.css";
+import "@pnotify/core/dist/BrightTheme.css";
+import "@pnotify/core/dist/PNotify.css";
+import "@pnotify/mobile/dist/PNotifyMobile.css";
+import { getImages } from "./js/getImages";
+import { renderImages } from "./js/renderImages";
+
+const listRef = document.querySelector(".gallery");
+const inputRef = document.querySelector(".search-input");
+const elemRef = document.querySelector(".elem");
+
+let search = "";
+const limit = 12;
+let page = 1;
+
+async function renderList() {
   try {
-    const res = await fetch(
-      `${BASE_URL}?image_type=photo&orientation=horizontal&q=${search}&page=${page}&per_page=12&key=${API_KEY}`,
-      );
-      if (res.status !== 200) {
-          throw new Error("error");
-      }
-      const data = await res.json();
-      return data
-  } catch (err) {
-    console.log(err);
+    const res = await getImages(search, page);
+    if (res.totalHits === 0) {
+      notice({
+        text: "Ми нічіго не знайшли",
+        delay: 2000,
+      });
+      return null;
+    }
+    if (page === 1) {
+      success({
+        text: `Ми знайшли ${res.totalHits} зображень`,
+        delay: 2000,
+      });
+    }
+    listRef.insertAdjacentHTML("beforeend", renderImages(res.hits));
+    return res;
+  } catch (error) {
+    error({
+      text: "Ми не знайшли дані сервера",
+      delay: 2000,
+    });
+    console.log(error);
   }
 }
+
+inputRef.addEventListener(
+  "input",
+  debounce(async (evt) => {
+    listRef.innerHTML = "";
+    page = 1;
+    search = evt.target.value.trim();
+    if (!search) {
+      return;
+    }
+    const res = await renderList();
+    if (!res) {
+      observer.unobserve(elemRef);
+      return;
+    }
+    observer.observe(elemRef);
+  }),
+  500
+);
+
+const observer = new IntersectionObserver(
+  async (entries) => {
+    if (entries[0].isIntersecting && search.length > 2) {
+      page++;
+      const res = await getImages(search, page);
+      listRef.insertAdjacentHTML("beforeend", renderImages(res.hits));
+      const total = Math.floor(res.totalHits - page * limit);
+      if (total <= 0 && res.totalHits > 0) {
+        info({
+          text: "Усі зображення завантажено",
+          delay: 2000,
+        });
+
+        observer.unobserve(entries[0].target);
+      }
+      if (res.totalHits === 0) {
+        return;
+      }
+    }
+  },
+  { rootMargin: "50px" }
+);
+listRef.addEventListener("click", (evt) => {
+  if (!evt.target.matches("img")) return;
+
+  const largeImageURL = evt.target.dataset.large;
+
+  const instance = basicLightbox.create(
+    `
+      <div class="modal">
+        <img src="${largeImageURL}" alt="">
+      </div>
+    `,
+    {
+      onShow: (instance) => {
+        window.addEventListener("keydown", closeModal);
+      },
+      onClose: (instance) => {
+        window.removeEventListener("keydown", closeModal);
+      },
+    }
+  );
+
+  function closeModal(evt) {
+    if (evt.code === "Escape") {
+      instance.close();
+    }
+  }
+
+  instance.show();
+});
